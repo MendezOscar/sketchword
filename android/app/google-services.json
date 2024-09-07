@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1052881439492",
+    "project_id": "sketchworddb",
+    "storage_bucket": "sketchworddb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052881439492:android:502bf86911f745d9dd5e51",
+        "android_client_info": {
+          "package_name": "com.company.sketchword"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6f3fpuNwyFS26naqBQHkZVV_Q81Md6xM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
