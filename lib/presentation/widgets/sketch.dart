@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sketchword/presentation/pages/home/new_edit_sketches.dart';
 
 import '../../domain/entities/sketches.dart';
+import '../pages/home/edit_sketches.dart';
 import '../pages/home/home.dart';
 import 'my_app_bar.dart';
 
@@ -288,10 +289,9 @@ class ViewSketch extends StatelessWidget {
                                   shadowColor: Colors.transparent),
                               onPressed: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => NewEditSketches(
+                                    builder: (context) => EditSketches(
                                           idUser: "",
                                           sketchId: sketchId,
-                                          isEditing: true,
                                           sketchToEdit: sketch,
                                         )));
                               },

@@ -48,9 +48,8 @@ class WelcomeCard extends StatelessWidget {
           child: TextButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => NewEditSketches(
+                    builder: (context) => NewSketches(
                           idUser: idUser,
-                          isEditing: false,
                           sketchId: '',
                         )));
               },

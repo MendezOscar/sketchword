@@ -6,22 +6,24 @@ import 'package:sketchword/presentation/pages/home/home.dart';
 import 'package:sketchword/presentation/pages/home/new_point.dart';
 
 import '../../widgets/my_app_bar.dart';
+import 'edit_point.dart';
 
-class NewSketches extends StatefulWidget {
+class EditSketches extends StatefulWidget {
   final String idUser;
   final String sketchId;
+  final Sketches sketchToEdit;
 
-  const NewSketches({
-    super.key,
-    required this.idUser,
-    required this.sketchId,
-  });
+  const EditSketches(
+      {super.key,
+      required this.idUser,
+      required this.sketchId,
+      required this.sketchToEdit});
 
   @override
-  State<NewSketches> createState() => _NewSketchesState();
+  State<EditSketches> createState() => _NewSketchesState();
 }
 
-class _NewSketchesState extends State<NewSketches> {
+class _NewSketchesState extends State<EditSketches> {
   String type = 'Expositivo';
   String category = 'Edificacion';
   late Sketches sketch;
@@ -44,16 +46,26 @@ class _NewSketchesState extends State<NewSketches> {
 
   @override
   Widget build(BuildContext context) {
-    void callNewPointModalBottomSheet(
-        PointSketches? pointSketch, int quantity) {
+    title.text = widget.sketchToEdit.title;
+    topic.text = widget.sketchToEdit.topic;
+    quote.text = widget.sketchToEdit.quote;
+    introduction.text = widget.sketchToEdit.introduction;
+    illustration.text = widget.sketchToEdit.illustration ?? "";
+    conclusion.text = widget.sketchToEdit.conclusion;
+    type = widget.sketchToEdit.type;
+    category = widget.sketchToEdit.category;
+    pointSketches = widget.sketchToEdit.pointSketches;
+
+    void callNewPointModalBottomSheet(PointSketches pointSketch, int quantity) {
       showModalBottomSheet(
         isScrollControlled: true,
         context: context,
         builder: (BuildContext context) {
           return SizedBox(
             child: Center(
-                child: NewPoint(
+                child: EditPoint(
               quantity: quantity,
+              pointSketchToEdit: pointSketch,
             )),
           );
         },
@@ -62,10 +74,15 @@ class _NewSketchesState extends State<NewSketches> {
               {}
             else
               {
-                setState(() {
-                  number++;
-                }),
-                pointSketches.add(value)
+                index = pointSketches
+                    .indexWhere((value) => value.id == pointSketch.id),
+                pointSketches[index] = PointSketches(
+                    id: value.id,
+                    name: value.name,
+                    keyWord: value.keyWord,
+                    keyDefinition: value.keyDefinition,
+                    keyQuote: value.keyQuote,
+                    mainIdea: value.mainIdea)
               },
           });
     }
@@ -75,7 +92,7 @@ class _NewSketchesState extends State<NewSketches> {
         preferredSize:
             Size.fromHeight(MediaQuery.of(context).size.height * 0.07),
         child: MyAppBar(
-          title: 'Nuevo bosquejo',
+          title: 'Editar bosquejo',
           icon: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.of(context).pop(),
@@ -231,7 +248,7 @@ class _NewSketchesState extends State<NewSketches> {
                       child: IconButton(
                           onPressed: () {
                             callNewPointModalBottomSheet(
-                                null, pointSketches.length);
+                                pointSketches[index], pointSketches.length);
                           },
                           icon: const Icon(
                             Icons.add,
@@ -250,6 +267,17 @@ class _NewSketchesState extends State<NewSketches> {
                   itemBuilder: (BuildContext context, int index) {
                     return ExpansionTile(
                       expandedAlignment: Alignment.topLeft,
+                      leading: Column(
+                        children: [
+                          IconButton(
+                              iconSize: 20,
+                              onPressed: () {
+                                callNewPointModalBottomSheet(
+                                    pointSketches[index], pointSketches.length);
+                              },
+                              icon: const Icon(Icons.edit)),
+                        ],
+                      ),
                       collapsedBackgroundColor:
                           const Color.fromARGB(255, 210, 243, 207),
                       title: Text(pointSketches[index].name,
@@ -500,7 +528,8 @@ class _NewSketchesState extends State<NewSketches> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        addSketches(context, sketch, widget.idUser);
+                        editSketches(
+                            context, sketch, widget.idUser, widget.sketchId);
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => const Home()));
                       }
@@ -524,11 +553,11 @@ class _NewSketchesState extends State<NewSketches> {
   }
 }
 
-Future<void> addSketches(context, Sketches sketch, String userId) {
+Future<void> editSketches(
+    context, Sketches sketch, String userId, String sketchId) {
   CollectionReference sketches =
       FirebaseFirestore.instance.collection('sketches');
-  return sketches.add({
-    'owner': userId,
+  return sketches.doc(sketchId).update({
     'title': sketch.title,
     'topic': sketch.topic,
     'quote': sketch.quote,
@@ -540,7 +569,7 @@ Future<void> addSketches(context, Sketches sketch, String userId) {
     'illustration': sketch.illustration,
   }).then((value) {
     SnackBar(
-      content: const Text('Bosquejo creado existosamente'),
+      content: const Text('Bosquejo editado existosamente'),
       action: SnackBarAction(
         label: 'Undo',
         onPressed: () {},
@@ -549,7 +578,7 @@ Future<void> addSketches(context, Sketches sketch, String userId) {
     // ignore: invalid_return_type_for_catch_error
   }).catchError((error) {
     final snackBar = SnackBar(
-      content: const Text('Error en la creacion de Bosquejo'),
+      content: const Text('Error en la edicion de Bosquejo'),
       action: SnackBarAction(
         label: 'Undo',
         onPressed: () {

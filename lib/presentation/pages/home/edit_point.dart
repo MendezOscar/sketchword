@@ -2,29 +2,33 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/entities/point_sketches.dart';
 
-class NewPoint extends StatefulWidget {
+class EditPoint extends StatefulWidget {
   final int quantity;
+  final PointSketches pointSketchToEdit;
 
-  const NewPoint({
-    super.key,
-    required this.quantity,
-  });
+  const EditPoint(
+      {super.key, required this.quantity, required this.pointSketchToEdit});
 
   @override
-  State<NewPoint> createState() => _NewPointState();
+  State<EditPoint> createState() => _NewPointState();
 }
 
-class _NewPointState extends State<NewPoint> {
+class _NewPointState extends State<EditPoint> {
   TextEditingController name = TextEditingController();
   TextEditingController keyWord = TextEditingController();
   TextEditingController keyDefinition = TextEditingController();
   TextEditingController keyQuote = TextEditingController();
   TextEditingController mainIdea = TextEditingController();
-  PointSketches? pointSketch;
-  late PointSketches newPointSketch;
+  late PointSketches pointSketch;
 
   @override
   Widget build(BuildContext context) {
+    name.text = widget.pointSketchToEdit.name;
+    keyWord.text = widget.pointSketchToEdit.keyWord;
+    keyDefinition.text = widget.pointSketchToEdit.keyDefinition;
+    keyQuote.text = widget.pointSketchToEdit.keyQuote;
+    mainIdea.text = widget.pointSketchToEdit.mainIdea;
+
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -111,19 +115,19 @@ class _NewPointState extends State<NewPoint> {
                   backgroundColor: const Color(0XFF0879A6),
                   child: IconButton(
                       onPressed: () {
-                        newPointSketch = PointSketches(
-                            id: widget.quantity + 1,
+                        pointSketch = PointSketches(
+                            id: widget.pointSketchToEdit.id,
                             name: name.text,
                             keyWord: keyWord.text,
                             keyDefinition: keyDefinition.text,
                             keyQuote: keyQuote.text,
                             mainIdea: mainIdea.text);
-                        if (newPointSketch.name == '' ||
-                            newPointSketch.keyWord == '' ||
-                            newPointSketch.keyDefinition == '' ||
-                            newPointSketch.mainIdea == '') {
+                        if (pointSketch.name == '' ||
+                            pointSketch.keyWord == '' ||
+                            pointSketch.keyDefinition == '' ||
+                            pointSketch.mainIdea == '') {
                         } else {
-                          Navigator.pop(context, newPointSketch);
+                          Navigator.pop(context, pointSketch);
                         }
                       },
                       icon: const Icon(
